@@ -1,5 +1,4 @@
-{ ... }:
-{
+{ ... }: {
   programs.awscli.enable = true;
   programs.bat.enable = true;
   programs.bottom.enable = true;
