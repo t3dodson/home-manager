@@ -26,6 +26,59 @@ nix shell \
 
         colima exec --profile $PROFILE -- bash -c "$(cat <<'INNER'
             alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock docker.io/wagoodman/dive"
+          runAsRoot = ''
+            #!${pkgs.runtimeShell}
+                        set -euo pipefail
+
+                        ${pkgs.dockerTools.shadowSetup}
+
+                        # --- multi-user Nix plumbing ---
+
+                        if ! getent group nixbld >/dev/null 2>&1; then
+                          groupadd -r nixbld
+                        fi
+
+                        for i in $(seq 1 8); do
+                          if ! id "nixbld$i" >/dev/null 2>&1; then
+                            useradd -r -g nixbld -d /var/empty -s /usr/sbin/nologin "nixbld$i" || true
+                          fi
+                        done
+
+                        mkdir -p /nix/var/nix/profiles/per-user/root
+                        mkdir -p /nix/var/nix/profiles/per-user/tom
+                        mkdir -p /nix/var/nix/daemon-socket
+                        mkdir -p /nix/var/log/nix
+                        chmod 0755 /nix/var/nix/daemon-socket
+
+                        # Make /tmp usable like a normal Unix system
+                        mkdir -p /tmp
+                        chmod 1777 /tmp
+
+                        # --- real user 'tom' ---
+
+                        if ! id tom >/dev/null 2>&1; then
+                          useradd -m -s /bin/bash tom
+                        fi
+
+                        # --- Nix config: use /etc/nix/nix.conf like the installer ---
+
+                        mkdir -p /etc/nix
+                        cat >/etc/nix/nix.conf <<'EOF'
+                          experimental-features = nix-command flakes
+                          sandbox = false
+                          build-users-group = nixbld
+                        EOF
+
+                        # --- TLS + daemon env for login shells (optional) ---
+
+                        mkdir -p /etc/profile.d
+
+                        cat >/etc/profile.d/nix.sh <<'EOF'
+                          export NIX_REMOTE=daemon
+                        EOF
+
+                        chmod 0644 /etc/profile.d/nix.sh
+          '';
             docker run -it --rm nixos/nix bash -c "$(cat <<'DOCKER_INNER'
                 export NIX_CONFIG='experimental-features = nix-command flakes' && \
                 export USER=tom
