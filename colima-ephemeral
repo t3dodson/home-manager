@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+nix shell \
+      nixpkgs#docker-client \
+      nixpkgs#colima \
+      --command bash -c "$(cat <<"EOF"
+        set -euo pipefail
+        PROFILE="tmp-profile-$(date +%Y%m%d-%H%M)"
+        cleanup() {
+            echo "Running cleanup"
+            colima stop
+            colima delete --profile "$PROFILE" --force
+        }
+
+        trap 'cleanup' EXIT INT TERM HUP
+
+        colima start \
+            --profile $PROFILE \
+            --activate \
+            --disk 16 \
+            --memory 4 \
+            --dns 1.1.1.1 \
+            --dns 8.8.8.8 \
+            --runtime docker
+
+        colima ssh --profile $PROFILE
+EOF
+)"
+

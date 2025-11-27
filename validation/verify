@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+nix shell \
+      nixpkgs#docker-client \
+      nixpkgs#colima \
+      --command bash -c "$(cat <<"EOF"
+        set -euo pipefail
+        PROFILE="tmp-profile-$(date +%Y%m%d-%H%M)"
+        cleanup() {
+            echo "Running cleanup"
+            colima stop
+            colima delete --profile "$PROFILE" --force
+        }
+
+        trap 'cleanup' EXIT INT TERM HUP
+
+        colima start \
+            --profile $PROFILE \
+            --activate \
+            --disk 8 \
+            --memory 2 \
+            --dns 1.1.1.1 \
+            --dns 8.8.8.8 \
+            --runtime docker
+
+        colima exec --profile $PROFILE -- bash -c "$(cat <<'INNER'
+            alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock docker.io/wagoodman/dive"
+            docker run -it --rm nixos/nix bash -c "$(cat <<'DOCKER_INNER'
+                export NIX_CONFIG='experimental-features = nix-command flakes' && \
+                export USER=tom
+                export HOME=/home/$USER && \
+                mkdir -p $HOME && \
+                mkdir -p "$HOME/.local/state/nix/profiles" && \
+                nix --extra-experimental-features 'nix-command flakes' run \
+                    nixpkgs#git -- clone 'https://github.com/t3dodson/home-manager' $(mkdir -p ~/.config && echo ~/.config/home-manager) && \
+                nix --extra-experimental-features 'nix-command flakes' run \
+                    nixpkgs#home-manager -- switch --flake ~/.config/home-manager#tom || bash && \
+                    read -t 10 -p "y to inspect with bash (10s timeout): " ans; [[ $ans == y ]] || exit 1 && \
+                bash
+
+DOCKER_INNER
+)"
+INNER
+)"
+EOF
+)"
+
