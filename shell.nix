@@ -15,7 +15,7 @@ in {
       if [[ ${
         toString config.programs.tmux.enable
       } == 1 && -n "$PS1" && -z "$TMUX" ]]; then
-        exec tmux attach -t main || tmux new -s main
+        tmux attach -t main || tmux new -s main
       fi
     '';
     inherit shellAliases;
