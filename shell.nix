@@ -2,6 +2,7 @@
 let
   shellAliases = {
     opencode = "nix run nixpkgs#opencode --";
+    hms = "home-manager switch";
   };
 in {
   home.shell.enableBashIntegration = true;
@@ -11,8 +12,10 @@ in {
     enable = true;
     enableCompletion = true;
     initExtra = ''
-      if [[ ${toString config.programs.tmux.enable} == 1 && -n "$PS1" && -z "$TMUX" ]]; then
-        tmux attach -t main || tmux new -s main
+      if [[ ${
+        toString config.programs.tmux.enable
+      } == 1 && -n "$PS1" && -z "$TMUX" ]]; then
+        exec tmux attach -t main || tmux new -s main
       fi
     '';
     inherit shellAliases;
@@ -22,9 +25,7 @@ in {
     enableCompletion = true;
     antidote = {
       enable = true;
-      plugins = [
-        "zsh-users/zsh-autosuggestions"
-      ];
+      plugins = [ "zsh-users/zsh-autosuggestions" ];
     };
     defaultKeymap = "vicmd";
     dotDir = "${config.xdg.configHome}/zsh";
@@ -38,12 +39,8 @@ in {
       saveNoDups = true;
       share = true;
     };
-    setOptions = [
-      "INTERACTIVECOMMENTS"
-    ];
+    setOptions = [ "INTERACTIVECOMMENTS" ];
     inherit shellAliases;
-    syntaxHighlighting = {
-      enable = true;
-    };
+    syntaxHighlighting = { enable = true; };
   };
 }
