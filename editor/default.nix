@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   home.sessionVariables = let nvim = "nvim";
   in {
     "EDITOR" = nvim;
@@ -12,6 +12,9 @@
     enable = true;
     source = ./.editorconfig;
   };
+  home.activation.afterPkgs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    [ -d "$HOME/.config/nvim" ] || git clone https://github.com/t3dodson/nvim.git "$HOME/.config/nvim"
+  '';
 
   programs.neovim = {
     enable = true;
