@@ -8,6 +8,7 @@
   home.packages = [
     pkgs.clang
     pkgs.curl
+    pkgs.glibc
     pkgs.gnutar
     pkgs.gzip
     pkgs.lua51Packages.lua
