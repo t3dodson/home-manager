@@ -5,8 +5,16 @@
     "VISUAL" = nvim;
     "MANPAGER" = "${nvim} +Man!";
   };
-  home.packages =
-    [ pkgs.lua51Packages.lua pkgs.lua51Packages.luarocks pkgs.unzip pkgs.wget ];
+  home.packages = [
+    pkgs.clang
+    pkgs.curl
+    pkgs.gnutar
+    pkgs.gzip
+    pkgs.lua51Packages.lua
+    pkgs.lua51Packages.luarocks
+    pkgs.unzip
+    pkgs.wget
+  ];
 
   home.file.".editorconfig" = {
     enable = true;
