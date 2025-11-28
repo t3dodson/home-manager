@@ -12,11 +12,9 @@ in {
     enable = true;
     enableCompletion = true;
     initExtra = ''
-      if [[ ${
+      [[ ${
         toString config.programs.tmux.enable
-      } == 1 && -n "$PS1" && -z "$TMUX" ]]; then
-        tmux attach -t main || tmux new -s main
-      fi
+      } == 1 ]] && [[ -t 0 ]] && [[ -t 1 ]] && [[ -z "$TMUX" ]] && { tmux attach -t main || tmux new -s main; }
     '';
     inherit shellAliases;
   };
