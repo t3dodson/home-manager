@@ -12,6 +12,8 @@
     pkgs.gzip
     pkgs.lua51Packages.lua
     pkgs.lua51Packages.luarocks
+    # TODO, better way for dynamically getting latest versions
+    pkgs.nodejs_24
     pkgs.unzip
     pkgs.wget
   ];
