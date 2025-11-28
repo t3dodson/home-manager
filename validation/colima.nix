@@ -30,17 +30,21 @@
         colima ssh --profile "$PROFILE" ${commandText}
       '';
     };
-  home-manager-validation-command-default = ''
-    bash -c '
-                      set -euo pipefail
-                      mkdir -p $HOME/.config
-                      git clone https://github.com/t3dodson/home-manager ~/.config/home-manager
-                      cd ~/.config/home-manager
-                      nix run nixpkgs#home-manager -- switch
-                    '
-  '';
-  home-manager-validation-command =
-    { dockerImage, command ? home-manager-validation-command-default, ... }:
+  home-manager-validation-command-default = { interactive }:
+    let interactiveCommand = if interactive then "bash" else "";
+    in ''
+      bash -c '
+                        set -euo pipefail
+                        mkdir -p $HOME/.config
+                        git clone https://github.com/t3dodson/home-manager ~/.config/home-manager
+                        cd ~/.config/home-manager
+                        nix run nixpkgs#home-manager -- switch
+                        ${interactiveCommand}
+                      '
+    '';
+  home-manager-validation-command = { dockerImage
+    , command ? home-manager-validation-command-default { inherit interactive; }
+    , interactive ? false, ... }:
     let commandText = if builtins.isNull command then "bash" else command;
     in ''
       set -euo pipefail

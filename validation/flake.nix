@@ -25,16 +25,30 @@
         fi
       '';
       colimaModule = import ./colima.nix { inherit pkgs; };
-      colimaScript = colimaModule.colima-ephemeral {
-        command = colimaModule.home-manager-validation-command {
-          dockerImage = self.packages.${system}.nix-ci;
-        };
-      };
 
     in {
-      apps.${system}.colima = {
-        type = "app";
-        program = "${colimaScript}/bin/colima-ephemeral";
+      apps.${system} = {
+        colima = {
+          type = "app";
+          program = let
+            colimaScript = colimaModule.colima-ephemeral {
+              command = colimaModule.home-manager-validation-command {
+                dockerImage = self.packages.${system}.nix-ci;
+              };
+            };
+          in "${colimaScript}/bin/colima-ephemeral";
+        };
+        colima-interactive = {
+          type = "app";
+          program = let
+            colimaScript = colimaModule.colima-ephemeral {
+              command = colimaModule.home-manager-validation-command {
+                dockerImage = self.packages.${system}.nix-ci;
+                interactive = true;
+              };
+            };
+          in "${colimaScript}/bin/colima-ephemeral";
+        };
       };
       packages.${system} = {
         nix-ci = pkgs.dockerTools.buildImage {
