@@ -18,12 +18,24 @@
         nix-daemon &
 
         # Login as tom; /etc/profile.d/nix.sh will set NIX_REMOTE + TLS env
-        # exec su - tom
-        # exec su tom -s /bin/bash -c "bash -l"
-        exec su --login tom
+        if [ "$#" -eq 0 ]; then
+          exec su --login tom
+        else
+          exec su --login tom -s /bin/bash -c 'exec "$@"' -- bash "$@"
+        fi
       '';
+      colimaModule = import ./colima.nix { inherit pkgs; };
+      colimaScript = colimaModule.colima-ephemeral {
+        command = colimaModule.home-manager-validation-command {
+          dockerImage = self.packages.${system}.nix-ci;
+        };
+      };
 
     in {
+      apps.${system}.colima = {
+        type = "app";
+        program = "${colimaScript}/bin/colima-ephemeral";
+      };
       packages.${system} = {
         nix-ci = pkgs.dockerTools.buildImage {
           name = "nix-ci";
@@ -41,9 +53,9 @@
               pkgs.git
               pkgs.nix
               pkgs.cacert
-              pkgs.shadow # 🔹 provides /bin/su
+              pkgs.shadow
               pkgs.su
-              entrypoint # our /bin/entrypoint
+              entrypoint
             ];
             pathsToLink = [ "/bin" "/etc/ssl/certs" ];
           };
@@ -139,11 +151,8 @@
 
           config = {
             User = "root";
-            #WorkingDir = "/work";
-            Cmd = [ "/bin/entrypoint" ];
+            Entrypoint = [ "/bin/entrypoint" ];
             Env = [
-              #  "PATH=/bin:/usr/bin"
-              # TLS for daemon + clients
               "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
               "NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
             ];
