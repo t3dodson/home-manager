@@ -12,8 +12,9 @@
     enable = true;
     source = ./.editorconfig;
   };
-  home.activation.afterPkgs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    [ -d "$HOME/.config/nvim" ] || git clone https://github.com/t3dodson/nvim.git "$HOME/.config/nvim"
+  home.activation.afterPkgs = let git = "${pkgs.git}/bin/git";
+  in lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    [ -d "$HOME/.config/nvim" ] || ${git} clone https://github.com/t3dodson/nvim.git "$HOME/.config/nvim"
   '';
 
   programs.neovim = {
