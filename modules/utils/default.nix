@@ -1,4 +1,5 @@
-{ ... }: {
+{ pkgs, ... }: {
+  home.packages = [ pkgs.strace ];
   programs.awscli.enable = true;
   programs.bat.enable = true;
   programs.bottom.enable = true;
@@ -6,7 +7,11 @@
     enable = true;
     enableGitIntegration = true;
   };
-  programs.eza.enable = true;
+  programs.eza = {
+    enable = true;
+    enableBashIntegration = false;
+    enableZshIntegration = false;
+  };
   programs.fd.enable = true;
   programs.fzf.enable = true;
   programs.htop.enable = true;
