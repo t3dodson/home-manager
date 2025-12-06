@@ -45,13 +45,15 @@
   home-manager-validation-command = { dockerImage
     , command ? home-manager-validation-command-default { inherit interactive; }
     , interactive ? false, ... }:
-    let commandText = if builtins.isNull command then "bash" else command;
+    let
+      commandText = if builtins.isNull command then "bash" else command;
+      ttyArgs = if interactive then "-it" else "";
     in ''
       set -euo pipefail
 
       docker load < ${dockerImage}
 
       IMAGE_ID=$(docker images --quiet | head -n1)
-      docker run --rm -it "$IMAGE_ID" ${commandText}
+      docker run --rm ${ttyArgs} "$IMAGE_ID" ${commandText}
     '';
 }

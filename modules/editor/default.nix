@@ -29,9 +29,16 @@
   };
   home.activation.nvimConfig = let
     git = "${pkgs.git}/bin/git";
-    nvimConfigPath = "${config.xdg.configHome}";
+    nvimConfigPath = "${config.xdg.configHome}/nvim";
   in lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    [ -d "${nvimConfigPath}" ] || ${git} clone https://github.com/t3dodson/nvim.git "${nvimConfigPath}"
+    if [[ -v DRY_RUN ]]; then
+      echo "ENSURE NVIM-CONFIG EXISTS"
+    elif [[ -d "${nvimConfigPath}" ]]; then
+      echo "TMUX-CONFIG already Exists"
+    else
+      echo "BOOTSTRAPPING NVIM-CONFIG"
+      ${git} clone https://github.com/t3dodson/nvim.git "${nvimConfigPath}"
+    fi
   '';
 
   programs.neovim = {

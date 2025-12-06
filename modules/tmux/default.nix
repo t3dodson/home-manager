@@ -41,7 +41,15 @@ in {
   home.activation.tmuxTpm = let git = "${pkgs.git}/bin/git";
 
   in lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    [ -d "${tpm}" ] || { mkdir -p "${tmuxPlugins}" && ${git} clone https://github.com/tmux-plugins/tpm.git "${tpm}" ; }
+    if [[ -v DRY_RUN ]]; then
+      echo "ENSURE TMUX-TPM EXISTS"
+    elif [[ -d "${tpm}" ]]; then
+      echo "TMUX-TPM Already Exists"
+    else
+      echo "BOOTSTRAPPING TMUX-TPM"
+      mkdir -p "${tmuxPlugins}" &&
+      ${git} clone https://github.com/tmux-plugins/tpm.git "${tpm}"
+    fi
   '';
 }
 
