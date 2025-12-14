@@ -197,6 +197,18 @@
         "type": "github"
       }
     },
+    "identity": {
+      "flake": false,
+      "locked": {
+        "path": "identity.nix",
+        "type": "path"
+      },
+      "original": {
+        "path": "identity.nix",
+        "type": "path"
+      },
+      "parent": []
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1764517877,
@@ -274,6 +286,7 @@
         "fenix": "fenix",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
+        "identity": "identity",
         "nixpkgs": "nixpkgs_2",
         "stylix": "stylix"
       }

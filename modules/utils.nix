@@ -1,5 +1,6 @@
-{ pkgs, ... }: {
-  home.packages = [ pkgs.strace ];
+{ pkgs, lib, system, ... }: {
+  home.packages = [ pkgs.tokei ]
+    ++ lib.optionals (lib.hasSuffix "-linux" system) [ pkgs.strace ];
   programs.awscli.enable = true;
   programs.bat.enable = true;
   programs.bottom.enable = true;

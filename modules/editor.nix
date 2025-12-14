@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }: {
+{ config, pkgs, lib, system, ... }: {
   stylix.targets.neovim.enable = false;
   home.sessionVariables = let nvim = "nvim";
   in {
@@ -9,7 +9,6 @@
   home.packages = [
     pkgs.clang
     pkgs.curl
-    pkgs.glibc
     pkgs.gnumake
     pkgs.gnutar
     pkgs.gzip
@@ -21,7 +20,7 @@
     pkgs.tree-sitter
     pkgs.unzip
     pkgs.wget
-  ];
+  ] ++ lib.optionals (lib.hasSuffix "-linux" system) [ pkgs.glibc ];
 
   home.file.".editorconfig" = {
     enable = true;

@@ -27,6 +27,7 @@ in {
       set -g @plugin 'tmux-plugins/tmux-sensible'
 
       set -g @plugin 'fcsonline/tmux-thumbs'
+      set -g @thumbs-key F
 
       run-shell '${tmuxPlugins}/tmux-thumbs/tmux-thumbs.tmux'
 
