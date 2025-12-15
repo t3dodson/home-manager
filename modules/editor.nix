@@ -16,7 +16,7 @@
     pkgs.lua51Packages.luarocks
     pkgs.nixd
     # TODO, better way for dynamically getting latest versions
-    pkgs.nodejs_24
+    #pkgs.nodejs_24
     pkgs.tree-sitter
     pkgs.unzip
     pkgs.wget

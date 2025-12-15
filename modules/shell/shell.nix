@@ -1,7 +1,11 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   shellAliases = {
     opencode = "nix run nixpkgs#opencode --";
+    hm = "home-manager";
+    hme = "cd ${config.xdg.configHome}/home-manager && nvim .";
+    hmm = "man home-manager";
+    hmmc = "man home-configuration.nix";
     hms = "home-manager switch";
   };
   smartAlias = { name, interactive, nonInteractive ? name }: ''
@@ -36,6 +40,13 @@ let
   };
   smartShellAliasesInitSnippet =
     builtins.concatStringsSep "\n" (builtins.attrValues smartShellAliases);
+  tmuxInit = if config.programs.tmux.enable then
+    let tmux = "${pkgs.tmux}/bin/tmux";
+    in ''
+      [[ -z "$TMUX" ]] && { ${tmux} attach -t main || ${tmux} new -s main; }
+    ''
+  else
+    "";
 in {
   home.shell.enableBashIntegration = true;
   home.shell.enableZshIntegration = true;
@@ -44,10 +55,8 @@ in {
     enable = true;
     enableCompletion = true;
     initExtra = ''
-      [[ "${
-        toString config.programs.tmux.enable
-      }" == "1" ]] && [[ -z "$TMUX" ]] && { tmux attach -t main || tmux new -s main; }
       ${smartShellAliasesInitSnippet}
+      ${tmuxInit}
     '';
     inherit shellAliases;
     # TODO export HISTIGNORE="cd:cd *:exit" cd/pwd/ls/exit for bash
@@ -60,10 +69,11 @@ in {
       enable = true;
       plugins = [ "zsh-users/zsh-autosuggestions" ];
     };
-    defaultKeymap = "vicmd";
+    #defaultKeymap = "vicmd";
     dotDir = "${config.xdg.configHome}/zsh";
     envExtra = ''
-      # .zshrc envExtra
+      ${smartShellAliasesInitSnippet}
+      ${tmuxInit}
     '';
     history = {
       append = true;
