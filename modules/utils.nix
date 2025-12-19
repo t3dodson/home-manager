@@ -1,5 +1,5 @@
 { pkgs, lib, system, ... }: {
-  home.packages = [ pkgs.tokei ]
+  home.packages = [ pkgs.tokei pkgs.fastfetch ]
     ++ lib.optionals (lib.hasSuffix "-linux" system) [ pkgs.strace ];
   programs.awscli.enable = true;
   programs.bat.enable = true;

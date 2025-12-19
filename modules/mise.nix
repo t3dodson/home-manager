@@ -10,6 +10,7 @@
         rust = "stable";
         cargo-binstall = "latest";
         go = "latest";
+        "cargo:diskonaut" = "latest";
       };
       settings = {
         trusted_config_paths = [ "${config.home.homeDirectory}" ];

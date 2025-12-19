@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 let
   shellAliases = {
+    ff = "fastfetch";
     opencode = "nix run nixpkgs#opencode --";
     hm = "home-manager";
     hme = "cd ${config.xdg.configHome}/home-manager && nvim .";
@@ -24,6 +25,11 @@ let
       name = "cat";
       interactive = "bat";
     };
+    find = smartAlias {
+      name = "find";
+      interactive = "fd";
+    };
+
     grep = smartAlias {
       name = "grep";
       interactive = "rg";
@@ -32,6 +38,10 @@ let
       name = "ls";
       interactive =
         "eza --oneline --grid --long --icons always --color always --group-directories-first --smart-group --header --git --git-repos";
+    };
+    top = smartAlias {
+      name = "top";
+      interactive = "btm";
     };
     tree = smartAlias {
       name = "tree";
