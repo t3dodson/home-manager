@@ -37,10 +37,7 @@
                 inherit system;
               };
             };
-	  homeManagerModules.default = { identity, pkgs, config, ... }: {
-	    imports = [./home.nix];
-	  };
-	  homeManagerModules.home = ./home.nix;
+	  legacyPackages.homeManagerModules.home = ./home.nix;
         };
     });
 }
