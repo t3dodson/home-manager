@@ -40,6 +40,7 @@
 	  homeManagerModules.default = { identity, pkgs, config, ... }: {
 	    imports = [./home.nix];
 	  };
+	  home = ./home.nix;
         };
     });
 }
