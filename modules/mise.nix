@@ -24,6 +24,13 @@
     settings = { color_theme = "catppuccin"; };
   };
 
+  # TODO: re-enable idiomatically (e.g. drop mise auto-install entirely and
+  # let `mise install` be a user-invoked step, or use programs.mise features).
+  # Disabled 2026-05-29: failing at boot because home-manager-tom.service has
+  # no ordering against network-online.target, so DNS is unavailable when
+  # activation runs and every `mise install` errors with "Name or service not
+  # known". See `journalctl -u home-manager-tom.service -b`.
+  /*
   home.activation.miseInstall = let mise = "${pkgs.mise}/bin/mise";
   in lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ -v DRY_RUN ]]; then
@@ -33,5 +40,6 @@
       ${mise} install
     fi
   '';
+  */
 
 }

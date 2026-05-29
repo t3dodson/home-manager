@@ -26,6 +26,12 @@
     enable = true;
     source = ./.editorconfig;
   };
+  # TODO: re-enable idiomatically (track nvim config as a flake input and
+  # symlink it via home.file, or `xdg.configFile."nvim".source = fetchgit {...}`).
+  # Disabled 2026-05-29: network call (`git clone`) during activation fails at
+  # boot before network-online. Guarded by an existence check, but first boot
+  # is still fatal.
+  /*
   home.activation.nvimConfig = let
     git = "${pkgs.git}/bin/git";
     nvimConfigPath = "${config.xdg.configHome}/nvim";
@@ -39,6 +45,7 @@
       ${git} clone https://github.com/t3dodson/nvim.git "${nvimConfigPath}"
     fi
   '';
+  */
 
   programs.neovim = {
     enable = true;

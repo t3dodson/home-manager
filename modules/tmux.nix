@@ -39,6 +39,12 @@ in {
     mouse = true;
     prefix = "C-b";
   };
+  # TODO: re-enable idiomatically (vendor tpm via a flake input / fetchgit, or
+  # use programs.tmux.plugins = [ pkgs.tmuxPlugins.tpm ... ]).
+  # Disabled 2026-05-29: network call (`git clone`) during activation fails at
+  # boot before network-online. Guarded by an existence check, but first boot
+  # is still fatal.
+  /*
   home.activation.tmuxTpm = let git = "${pkgs.git}/bin/git";
 
   in lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -52,5 +58,6 @@ in {
       ${git} clone https://github.com/tmux-plugins/tpm.git "${tpm}"
     fi
   '';
+  */
 }
 
