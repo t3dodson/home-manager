@@ -10,6 +10,7 @@ let
     hms = "home-manager switch";
   };
   smartAlias = { name, interactive, nonInteractive ? name }: ''
+    unalias ${name} 2>/dev/null || true
     ${name}() {
       # Smart Alias
       # Check that we are interactivly sending output to the terminal
