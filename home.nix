@@ -26,5 +26,10 @@
   stylix.base16Scheme =
     "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
 
+  # Plasma's kde-gtk-config rewrites ~/.gtkrc-2.0 right after stylix applies
+  # the look-and-feel, so let KDE own that path and keep home-manager's GTK2
+  # config in XDG (GTK2_RC_FILES points apps here).
+  gtk.gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+
   programs.home-manager.enable = true;
 }
